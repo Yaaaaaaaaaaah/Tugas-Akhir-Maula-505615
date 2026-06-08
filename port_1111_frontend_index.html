@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualisasi Data TA Maula</title>
+    <link rel="icon" type="image/png" href="icon-ugm.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header-brand">
+            <img src="icon-ugm.png" alt="UGM" class="logo-icon"><span class="logo">Tugas Akhir Maula</span>
+            <span class="location" id="location">📍 Belum ada data</span>
+        </div>
+        <div class="header-upload">
+            <div class="file-info" id="fileInfo">
+                <span class="file-icon">📄</span>
+                <span class="file-name" id="fileName">Belum ada file</span>
+                <span class="file-rows" id="fileRows"></span>
+            </div>
+            <label class="btn-upload" id="uploadLabel">
+                <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" hidden>
+                <span>📂 Upload File</span>
+            </label>
+            <button class="btn-clear" id="clearBtn" style="display:none;">✕</button>
+        </div>
+    </header>
+
+    <!-- DROP ZONE OVERLAY -->
+    <div class="drop-overlay" id="dropOverlay">
+        <div class="drop-content">
+            <div class="drop-icon">📂</div>
+            <div class="drop-text">Drop file Excel / CSV di sini</div>
+            <div class="drop-hint">.xlsx, .xls, .csv</div>
+        </div>
+    </div>
+
+    <!-- TAB NAVIGATION -->
+    <div class="tab-bar">
+        <button class="tab-btn active" data-tab="data" id="tabData">📊 Data Sensor</button>
+        <button class="tab-btn" data-tab="qos" id="tabQos">📡 Analisis QoS</button>
+    </div>
+
+    <!-- ==========================================
+         TAB 1: DATA SENSOR
+         ========================================== -->
+    <div class="tab-content active" id="tabContentData">
+        <!-- SENSOR ROW - 5 Cards (Rata-rata) -->
+        <section class="sensor-row">
+            <div class="card skeleton-card" data-type="pressure" id="cardPressure">
+                <div class="skeleton-content">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-label"></div>
+                    <div class="skeleton-value"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 40 40" class="icon-pressure">
+                            <circle cx="20" cy="20" r="16" class="gauge-bg" />
+                            <circle cx="20" cy="20" r="16" class="gauge-fill" id="pressureGauge" />
+                            <line x1="20" y1="20" x2="20" y2="8" class="gauge-needle" id="pressureNeedle" />
+                        </svg>
+                    </div>
+                    <div class="card-label">Tekanan Udara</div>
+                    <div class="card-sub">Rata-rata</div>
+                    <div class="card-value">
+                        <span class="value" id="airpressure">--</span>
+                        <span class="unit">mBar</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card skeleton-card" data-type="temperature" id="cardTemperature">
+                <div class="skeleton-content">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-label"></div>
+                    <div class="skeleton-value"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 24 40" class="icon-thermo">
+                            <rect x="8" y="2" width="8" height="28" rx="4" class="thermo-tube" />
+                            <circle cx="12" cy="34" r="6" class="thermo-bulb" />
+                            <rect x="10" y="8" width="4" height="20" class="thermo-fill" id="thermoFill" />
+                        </svg>
+                    </div>
+                    <div class="card-label">Suhu Udara</div>
+                    <div class="card-sub">Rata-rata</div>
+                    <div class="card-value">
+                        <span class="value" id="airtemperature">--</span>
+                        <span class="unit">°C</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card skeleton-card" data-type="humidity" id="cardHumidity">
+                <div class="skeleton-content">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-label"></div>
+                    <div class="skeleton-value"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 30 40" class="icon-drop">
+                            <path d="M15 4 C15 4 4 18 4 26 C4 33 9 38 15 38 C21 38 26 33 26 26 C26 18 15 4 15 4"
+                                class="drop-outline" />
+                            <path d="M15 4 C15 4 4 18 4 26 C4 33 9 38 15 38 C21 38 26 33 26 26 C26 18 15 4 15 4"
+                                class="drop-fill" id="humidityDrop" />
+                        </svg>
+                    </div>
+                    <div class="card-label">Kelembapan</div>
+                    <div class="card-sub">Rata-rata</div>
+                    <div class="card-value">
+                        <span class="value" id="airhumidity">--</span>
+                        <span class="unit">%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card skeleton-card" data-type="windspeed" id="cardWindspeed">
+                <div class="skeleton-content">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-label"></div>
+                    <div class="skeleton-value"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 40 30" class="icon-wind">
+                            <path d="M4 10 Q15 8 25 10 T38 8" class="wind-line w1" />
+                            <path d="M2 18 Q12 16 22 18 T36 16" class="wind-line w2" />
+                            <path d="M6 26 Q18 24 28 26 T40 24" class="wind-line w3" />
+                        </svg>
+                    </div>
+                    <div class="card-label">Kecepatan Angin</div>
+                    <div class="card-sub">Rata-rata</div>
+                    <div class="card-value">
+                        <span class="value" id="windspeed">--</span>
+                        <span class="unit">m/s</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card skeleton-card" data-type="winddirection" id="cardWinddirection">
+                <div class="skeleton-content">
+                    <div class="skeleton-icon"></div>
+                    <div class="skeleton-label"></div>
+                    <div class="skeleton-value"></div>
+                </div>
+                <div class="card-content">
+                    <div class="card-icon">
+                        <svg viewBox="0 0 40 40" class="icon-compass">
+                            <circle cx="20" cy="20" r="16" class="compass-ring" />
+                            <polygon points="20,6 24,20 20,24 16,20" class="compass-arrow" id="compassArrow" />
+                            <text x="20" y="8" class="compass-n">N</text>
+                        </svg>
+                    </div>
+                    <div class="card-label">Arah Angin</div>
+                    <div class="card-sub">Rata-rata</div>
+                    <div class="card-value">
+                        <span class="value" id="winddirection">--</span>
+                        <span class="unit">°</span>
+                    </div>
+                    <div class="direction-name" id="directionName">--</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- DATA TABLE -->
+        <section class="data-section">
+            <div class="data-header">
+                <div class="data-header-left">
+                    <span class="data-title">📋 Data Sensor</span>
+                    <span class="data-range" id="dataRange"></span>
+                </div>
+                <div class="data-actions">
+                    <div class="page-size-select">
+                        <label>Tampilkan:</label>
+                        <select id="pageSizeSelect">
+                            <option value="20" selected>20</option>
+                            <option value="50">50</option>
+                            <option value="80">80</option>
+                            <option value="100">100</option>
+                            <option value="250">250</option>
+                        </select>
+                    </div>
+                    <button id="exportBtn" class="btn-export" disabled>📥 Export CSV</button>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Waktu</th>
+                            <th>Tekanan (mBar)</th>
+                            <th>Suhu (°C)</th>
+                            <th>Kelembapan (%)</th>
+                            <th>Kec. Angin (m/s)</th>
+                            <th>Arah (°)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <tr>
+                            <td colspan="7" class="empty-state">
+                                <div class="empty-icon">📂</div>
+                                <div class="empty-text">Upload file Excel atau CSV untuk menampilkan data</div>
+                                <div class="empty-hint">Drag & drop file ke halaman ini, atau klik tombol "Upload File"
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination" id="pagination" style="display:none;">
+                <button class="page-btn" id="prevBtn" disabled>‹ Prev</button>
+                <span class="page-info" id="pageInfo">Halaman 1 dari 1</span>
+                <button class="page-btn" id="nextBtn" disabled>Next ›</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- ==========================================
+         TAB 2: ANALISIS QoS
+         ========================================== -->
+    <div class="tab-content" id="tabContentQos">
+        <div class="qos-container">
+            <!-- Empty state when no data -->
+            <div class="qos-empty" id="qosEmpty">
+                <div class="empty-icon">📡</div>
+                <div class="empty-text">Upload file data untuk melihat analisis QoS</div>
+                <div class="empty-hint">File harus memiliki kolom waktu kirim (tlocal) dan waktu terima (received_at)
+                    untuk analisis Latency</div>
+            </div>
+
+            <!-- QoS Content -->
+            <div class="qos-content" id="qosContent" style="display:none;">
+
+                <!-- Interval Setting -->
+                <div class="qos-setting">
+                    <label>Interval pengiriman data:</label>
+                    <select id="intervalSelect">
+                        <option value="60">1 menit</option>
+                        <option value="120">2 menit</option>
+                        <option value="300" selected>5 menit</option>
+                        <option value="600">10 menit</option>
+                        <option value="900">15 menit</option>
+                        <option value="1800">30 menit</option>
+                        <option value="3600">1 jam</option>
+                    </select>
+                    <button class="btn-recalc" id="recalcBtn">🔄 Hitung Ulang</button>
+                </div>
+
+                <!-- QoS Result Cards -->
+                <div class="qos-grid">
+                    <!-- LATENCY CARD -->
+                    <div class="qos-card" id="qosLatencyCard">
+                        <div class="qos-card-header">
+                            <h3>⏱️ Latency (End-to-End Delay)</h3>
+                        </div>
+
+                        <div class="qos-no-data" id="latencyNoData">
+                            <p>⚠️ Data tidak memiliki kolom <strong>waktu terima (received_at)</strong></p>
+                            <p class="hint">Tambahkan kolom "received_at" atau "waktu_terima" di Excel untuk menghitung
+                                latency</p>
+                        </div>
+
+                        <div class="qos-result" id="latencyResult" style="display:none;">
+                            <div class="qos-big-value">
+                                <span class="qos-number" id="latencyValue">--</span>
+                                <span class="qos-unit">ms</span>
+                            </div>
+                            <div class="qos-badge" id="latencyBadge">--</div>
+                            <div class="qos-formula" id="latencyFormula"></div>
+
+                            <div class="qos-details">
+                                <div class="qos-detail-item">
+                                    <span class="qos-detail-label">Min</span>
+                                    <span class="qos-detail-value" id="latencyMin">--</span>
+                                </div>
+                                <div class="qos-detail-item">
+                                    <span class="qos-detail-label">Max</span>
+                                    <span class="qos-detail-value" id="latencyMax">--</span>
+                                </div>
+                                <div class="qos-detail-item">
+                                    <span class="qos-detail-label">Paket</span>
+                                    <span class="qos-detail-value" id="latencyPackets">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TIPHON Reference Table -->
+                        <div class="qos-ref">
+                            <h4>Standar TIPHON — Latency</h4>
+                            <table class="ref-table">
+                                <thead>
+                                    <tr>
+                                        <th>Kategori</th>
+                                        <th>Latency</th>
+                                        <th>Indeks</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="ref-row" data-tier="4">
+                                        <td><span class="ref-dot" style="background:#10b981"></span>Sangat Baik</td>
+                                        <td>&lt; 150 ms</td>
+                                        <td>4</td>
+                                    </tr>
+                                    <tr class="ref-row" data-tier="3">
+                                        <td><span class="ref-dot" style="background:#3b82f6"></span>Baik</td>
+                                        <td>150 – 300 ms</td>
+                                        <td>3</td>
+                                    </tr>
+                                    <tr class="ref-row" data-tier="2">
+                                        <td><span class="ref-dot" style="background:#f59e0b"></span>Sedang</td>
+                                        <td>300 – 350 ms</td>
+                                        <td>2</td>
+                                    </tr>
+                                    <tr class="ref-row" data-tier="1">
+                                        <td><span class="ref-dot" style="background:#ef4444"></span>Buruk</td>
+                                        <td>&gt; 350 ms</td>
+                                        <td>1</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- PACKET LOSS CARD -->
+                    <div class="qos-card" id="qosPacketLossCard">
+                        <div class="qos-card-header">
+                            <h3>📦 Packet Loss</h3>
+                        </div>
+
+                        <div class="qos-no-data" id="packetLossNoData" style="display:none;">
+                            <p>⚠️ Data tidak cukup untuk menghitung packet loss</p>
+                        </div>
+
+                        <div class="qos-result" id="packetLossResult" style="display:none;">
+                            <div class="qos-big-value">
+                                <span class="qos-number" id="packetLossValue">--</span>
+                                <span class="qos-unit">%</span>
+                            </div>
+                            <div class="qos-badge" id="packetLossBadge">--</div>
+                            <div class="qos-formula" id="packetLossFormula"></div>
+
+                            <div class="qos-details">
+                                <div class="qos-detail-item">
+                                    <span class="qos-detail-label">P<sub>send</sub></span>
+                                    <span class="qos-detail-value" id="pSend">--</span>
+                                </div>
+                                <div class="qos-detail-item">
+                                    <span class="qos-detail-label">P<sub>receive</sub></span>
+                                    <span class="qos-detail-value" id="pReceive">--</span>
+                                </div>
+                                <div class="qos-detail-item">
+                                    <span class="qos-detail-label">Lost</span>
+                                    <span class="qos-detail-value" id="pLost">--</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- TIPHON Reference Table -->
+                        <div class="qos-ref">
+                            <h4>Standar TIPHON — Packet Loss</h4>
+                            <table class="ref-table">
+                                <thead>
+                                    <tr>
+                                        <th>Kategori</th>
+                                        <th>Packet Loss</th>
+                                        <th>Keterangan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="ref-row" data-tier="4">
+                                        <td><span class="ref-dot" style="background:#10b981"></span>Sangat Baik</td>
+                                        <td>0 – 3%</td>
+                                        <td>Tidak ada degradasi</td>
+                                    </tr>
+                                    <tr class="ref-row" data-tier="3">
+                                        <td><span class="ref-dot" style="background:#3b82f6"></span>Baik</td>
+                                        <td>3 – 15%</td>
+                                        <td>Degradasi kecil</td>
+                                    </tr>
+                                    <tr class="ref-row" data-tier="2">
+                                        <td><span class="ref-dot" style="background:#f59e0b"></span>Sedang</td>
+                                        <td>15 – 25%</td>
+                                        <td>Degradasi signifikan</td>
+                                    </tr>
+                                    <tr class="ref-row" data-tier="1">
+                                        <td><span class="ref-dot" style="background:#ef4444"></span>Buruk</td>
+                                        <td>&gt; 25%</td>
+                                        <td>Tidak layak</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
